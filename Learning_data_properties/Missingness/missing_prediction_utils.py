@@ -23,7 +23,6 @@ from sklearn.metrics import confusion_matrix, fbeta_score, recall_score, precisi
 
 '''Code For Processing data for predicting when missing data occurs'''
 
-
 def load_csv(file,sampling_rate):
     '''Function used to lead the data and dividie it into subsets for extracting time windows'''
 
@@ -233,33 +232,6 @@ def run_for_all(all_subj,hist,num_features,dataset):
     validation_data = (validation_windows,validation_labels)
 
     return all_train_subj,validation_data,scaler
-
-def run_for_lopo(subj,all_subj,subj_names,hist,num_features,dataset):
-
-    '''This function is used to create the training and testong LOPO sets acorss all subjects we use'''
-
-    print("-------------HELD OUTPATIENT: " + str(subj) + " -------------")
-    test_subsets = all_subj[subj]                                                  #test data is the current subject
-
-    train_names = subj_names.copy()                                                #exclude test data and extract the rest of the training data from subjects
-    train_names.remove(subj)
-    lopo_train_subj = all_subj.copy()
-    del lopo_train_subj[subj]                                                       #delete the held out subject data
-    lopo_test_subj = {}
-    lopo_test_subj[subj] = test_subsets
-
-    lopo_train_subj = windows_data(lopo_train_subj,hist,"train",num_features,dataset)
-    test_windows,test_labels, = windows_data(lopo_test_subj,hist,"test",num_features,dataset)
-    
-    lopo_train_subj, validation_data = get_validation_data(lopo_train_subj,hist,num_features)
-    validation_windows, validation_labels = validation_data
-    
-    lopo_train_subj,scaler = standardize(lopo_train_subj,"train",num_features)
-    validation_windows = standardize(validation_windows,"test",num_features,scaler)
-    validation_data = (validation_windows,validation_labels)
-    test_windows = standardize(test_windows,"test",num_features,scaler)
-
-    return subj,lopo_train_subj,validation_data,test_windows,test_labels,None
  
 def get_validation_data(lopo_train,hist,num_features):
     '''Divide train data into train and validation'''
